@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  role_name: helm_workloads
+  author: apellini
+  description: Deploy STRATUM Helm workload charts via kubernetes.core
+  license: MIT
+  min_ansible_version: "2.16"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+  galaxy_tags:
+    - kubernetes
+    - helm
+    - stratum
+dependencies: []

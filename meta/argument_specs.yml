@@ -1,0 +1,57 @@
+---
+argument_specs:
+  main:
+    short_description: Deploy STRATUM Helm workload charts via kubernetes.core
+    description: >
+      Installs the Helm CLI at the pinned version.
+      Adds Helm repositories and deploys releases from a data-driven list.
+      Uses kubernetes.core.helm_repository and kubernetes.core.helm for idempotent management.
+      The chart set is defined in the wrapper group_vars; this role stays stateless.
+    options:
+      helm_version:
+        type: str
+        required: true
+        description: >
+          Helm release tag to install (e.g. v3.15.2).
+          Downloaded from get.helm.sh. Idempotent: skipped if /usr/local/bin/helm exists.
+      helm_repositories:
+        type: list
+        required: true
+        elements: dict
+        description: List of Helm repositories to register.
+        options:
+          name:
+            type: str
+            required: true
+            description: Repository alias (e.g. qdrant).
+          url:
+            type: str
+            required: true
+            description: Repository URL (e.g. https://qdrant.github.io/qdrant-helm).
+      helm_releases:
+        type: list
+        required: true
+        elements: dict
+        description: List of Helm releases to deploy.
+        options:
+          name:
+            type: str
+            required: true
+            description: Helm release name.
+          chart:
+            type: str
+            required: true
+            description: Chart reference (e.g. qdrant/qdrant).
+          chart_version:
+            type: str
+            required: true
+            description: Chart version to pin (e.g. 0.9.0).
+          namespace:
+            type: str
+            required: true
+            description: Target Kubernetes namespace.
+          values:
+            type: dict
+            required: false
+            default: {}
+            description: Helm values overrides.

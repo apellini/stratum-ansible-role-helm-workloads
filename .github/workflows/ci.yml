@@ -1,0 +1,62 @@
+---
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install toolchain and collections
+        run: |
+          pip install ansible-core ansible-lint yamllint
+          ansible-galaxy collection install kubernetes.core
+
+      - name: yamllint
+        run: yamllint -d relaxed .
+
+      - name: ansible-lint
+        run: ansible-lint --profile=production
+
+      - name: Syntax check (stub inventory)
+        run: |
+          cat > /tmp/stub-inventory.yml << 'INV'
+          all:
+            hosts:
+              stub:
+                ansible_host: 127.0.0.1
+                ansible_connection: local
+                helm_version: "v3.15.2"
+                helm_repositories: []
+                helm_releases: []
+          INV
+          ansible-playbook --syntax-check -i /tmp/stub-inventory.yml tests/test.yml
+
+      - name: Secret scan (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Emit CI summary
+        if: always()
+        run: |
+          echo "## CI Results -- stratum-ansible-role-helm-workloads" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Check | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|--------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| yamllint | completed |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| ansible-lint --profile=production | completed |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| ansible-playbook --syntax-check | completed |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| gitleaks secret scan | completed |" >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,6 @@
+---
+- name: Syntax-check playbook for stratum-ansible-role-helm-workloads
+  hosts: all
+  become: true
+  roles:
+    - role: "{{ playbook_dir }}/.."
