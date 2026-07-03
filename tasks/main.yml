@@ -3,6 +3,7 @@
   ansible.builtin.get_url:
     url: "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
     dest: "/tmp/helm-{{ helm_version }}.tar.gz"
+    mode: "0644"
     force: false
 
 - name: Extract Helm binary (idempotent -- skipped if /usr/local/bin/helm exists)

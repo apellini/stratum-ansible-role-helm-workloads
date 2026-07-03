@@ -2,3 +2,5 @@
 profile: production
 warn_list:
   - yaml[truthy]
+exclude_paths:
+  - tests/
