@@ -3,4 +3,4 @@ helm_version: ""
 helm_binary_path: /usr/local/bin/helm
 helm_repositories: []
 helm_releases: []
-helm_wait_timeout: 600
+helm_wait_timeout: "600s"
