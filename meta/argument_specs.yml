@@ -13,7 +13,14 @@ argument_specs:
         required: true
         description: >
           Helm release tag to install (e.g. v3.15.2).
-          Downloaded from get.helm.sh. Idempotent: skipped if /usr/local/bin/helm exists.
+          Downloaded from get.helm.sh. Idempotent: skipped if installed version matches.
+      helm_binary_path:
+        type: str
+        required: false
+        default: /usr/local/bin/helm
+        description: >
+          Absolute path to the helm binary. Passed as binary_path to kubernetes.core tasks
+          so they bypass sudo's restricted secure_path (Rocky Linux 9 omits /usr/local/bin).
       helm_repositories:
         type: list
         required: true
