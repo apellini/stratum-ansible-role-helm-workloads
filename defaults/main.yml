@@ -1,4 +1,5 @@
 ---
 helm_version: ""
+helm_binary_path: /usr/local/bin/helm
 helm_repositories: []
 helm_releases: []
