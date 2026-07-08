@@ -58,8 +58,8 @@
     release_namespace: "{{ item.namespace }}"
     create_namespace: false
     values: "{{ item['values'] | default({}) }}"
-    wait: true
-    wait_timeout: "{{ helm_wait_timeout }}"
+    wait: "{{ item.wait | default(true) }}"
+    wait_timeout: "{{ item.wait_timeout | default(helm_wait_timeout) }}"
     kubeconfig: /etc/rancher/k3s/k3s.yaml
     binary_path: "{{ helm_binary_path }}"
   loop: "{{ helm_releases }}"
