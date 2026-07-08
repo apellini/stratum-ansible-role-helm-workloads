@@ -38,7 +38,7 @@
     chart_version: "{{ item.chart_version }}"
     release_namespace: "{{ item.namespace }}"
     create_namespace: false
-    values: "{{ item.values | default({}) }}"
+    values: "{{ item['values'] | default({}) }}"
     wait: true
     kubeconfig: /etc/rancher/k3s/k3s.yaml
     binary_path: "{{ helm_binary_path }}"
