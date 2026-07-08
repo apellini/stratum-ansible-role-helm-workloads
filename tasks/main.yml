@@ -31,6 +31,25 @@
     binary_path: "{{ helm_binary_path }}"
   loop: "{{ helm_repositories }}"
 
+- name: Clear pending Helm releases
+  ansible.builtin.shell:
+    cmd: |
+      status=$({{ helm_binary_path }} status {{ item.name }} -n {{ item.namespace }} -o json 2>/dev/null \
+               | python3 -c "import sys,json; print(json.load(sys.stdin)['info']['status'])" 2>/dev/null || true)
+      case "$status" in
+        pending-install|pending-upgrade|pending-rollback)
+          {{ helm_binary_path }} rollback {{ item.name }} -n {{ item.namespace }} 2>/dev/null \
+            || {{ helm_binary_path }} uninstall {{ item.name }} -n {{ item.namespace }}
+          ;;
+      esac
+    executable: /bin/bash
+  loop: "{{ helm_releases }}"
+  changed_when: false
+  failed_when: false
+  environment:
+    PATH: /usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
 - name: Deploy Helm releases
   kubernetes.core.helm:
     name: "{{ item.name }}"
