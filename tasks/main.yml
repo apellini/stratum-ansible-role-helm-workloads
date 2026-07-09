@@ -34,6 +34,7 @@
 - name: Clear pending Helm releases
   ansible.builtin.shell:
     cmd: |
+      set -o pipefail
       status=$({{ helm_binary_path }} status {{ item.name }} -n {{ item.namespace }} -o json 2>/dev/null \
                | python3 -c "import sys,json; print(json.load(sys.stdin)['info']['status'])" 2>/dev/null || true)
       case "$status" in
