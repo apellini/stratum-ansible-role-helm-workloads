@@ -62,3 +62,17 @@ argument_specs:
             required: false
             default: {}
             description: Helm values overrides.
+          wait:
+            type: bool
+            required: false
+            default: true
+            description: >
+              Whether to wait for all Pods to be ready before marking the
+              release as deployed. Set to false for releases whose readiness
+              depends on secrets created by a later role (e.g. mlflow).
+          wait_timeout:
+            type: str
+            required: false
+            description: >
+              Per-release timeout for --wait (Go duration string, e.g. 600s).
+              Defaults to the role-level helm_wait_timeout variable.
